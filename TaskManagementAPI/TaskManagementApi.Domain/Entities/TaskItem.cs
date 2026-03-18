@@ -24,9 +24,9 @@ namespace TaskManagementApi.Domain.Entities
             CreatedAt = DateTime.UtcNow;
         }
 
-        void MarkInProgress() => Status = TaskStatus.InProgress;
+        public void MarkInProgress() => Status = TaskStatus.InProgress;
 
-        void MarkCompleted() => Status = TaskStatus.Completed;
+        public void MarkCompleted() => Status = TaskStatus.Completed;
 
         public void UpdateDetails(string title, string description)
         {
