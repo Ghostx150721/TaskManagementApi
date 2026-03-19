@@ -16,4 +16,10 @@
     <Folder Include="Configuration\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\TaskManagementApi.Application\TaskManagementApi.Application.csproj" />
+    <ProjectReference Include="..\TaskManagementApi.Domain\TaskManagementApi.Domain.csproj" />
+    <ProjectReference Include="..\TaskManagementApi.Infrastructure\TaskManagementApi.Infrastructure.csproj" />
+  </ItemGroup>
+
 </Project>
