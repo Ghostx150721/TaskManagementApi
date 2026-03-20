@@ -1,0 +1,27 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15
+    container_name: task-postgres
+    environment:
+      POSTGRES_DB: taskdb
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: "Ghostx@#123"
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  api:
+    build: .
+    container_name: task-api
+    depends_on:
+      - postgres
+    environment:
+      ConnectionStrings__DefaultConnection: Host=postgres;Port=5432;Database=taskdb;Username=postgres;Password=Ghostx@#123
+    ports:
+      - "8080:8080"
+
+volumes:
+  postgres_data:
