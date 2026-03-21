@@ -37,14 +37,20 @@ jobs:
       working-directory: ./TaskManagementAPI
       run: dotnet test TaskManagementAPI.sln --configuration Release --verbosity normal
 
-    # Login to GitHub Container Registry
+    # Login to GHCR
     - name: Login to GHCR
       run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
 
-    # Build Docker Image
-    - name: Build Docker Image
-      run: docker build -t ghcr.io/${{ github.repository }}/task-api:latest ./TaskManagementAPI
+    # Set lowercase image name
+    - name: Set lowercase image name
+      run: |
+        IMAGE_NAME=$(echo "ghcr.io/${GITHUB_REPOSITORY}/task-api:latest" | tr '[:upper:]' '[:lower:]')
+        echo "IMAGE_NAME=$IMAGE_NAME" >> $GITHUB_ENV
 
-    # Push Docker Image
+    # Build
+    - name: Build Docker Image
+      run: docker build -t $IMAGE_NAME ./TaskManagementAPI
+
+    # Push
     - name: Push Docker Image
-      run: docker push ghcr.io/${{ github.repository }}/task-api:latest
+      run: docker push $IMAGE_NAME
