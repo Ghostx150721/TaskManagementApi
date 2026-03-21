@@ -18,11 +18,17 @@ jobs:
       with:
         dotnet-version: 8.0.x
 
+    # Restore
     - name: Restore dependencies
+      working-directory: ./TaskManagementAPI
       run: dotnet restore TaskManagementApi.sln
 
+    # Build
     - name: Build
-      run: dotnet build TaskManagementApi.sln --no-restore
+      working-directory: ./TaskManagementAPI
+      run: dotnet build TaskManagementApi.sln --no-restore --configuration Release
 
+    # Test
     - name: Run tests
+      working-directory: ./TaskManagementAPI
       run: dotnet test TaskManagementApi.sln --no-build --verbosity normal
