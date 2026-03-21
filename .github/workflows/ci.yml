@@ -1,9 +1,13 @@
-name: .NET CI
+name: .NET CI/CD
 
 on:
   push:
     branches: [ "main" ]
   pull_request:
+
+permissions:
+  contents: read
+  packages: write
 
 jobs:
   build:
@@ -31,4 +35,16 @@ jobs:
     # Test
     - name: Test
       working-directory: ./TaskManagementAPI
-      run: dotnet test TaskManagementAPI.sln --configuration Release --no-restore --verbosity normal
+      run: dotnet test TaskManagementAPI.sln --configuration Release --verbosity normal
+
+    # Login to GitHub Container Registry
+    - name: Login to GHCR
+      run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+
+    # Build Docker Image
+    - name: Build Docker Image
+      run: docker build -t ghcr.io/${{ github.repository }}/task-api:latest ./TaskManagementAPI
+
+    # Push Docker Image
+    - name: Push Docker Image
+      run: docker push ghcr.io/${{ github.repository }}/task-api:latest
