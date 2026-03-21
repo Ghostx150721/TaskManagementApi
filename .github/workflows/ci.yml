@@ -29,6 +29,6 @@ jobs:
       run: dotnet build TaskManagementAPI.sln --no-restore --configuration Release
 
     # Test
-    - name: Run tests
+    - name: Test
       working-directory: ./TaskManagementAPI
-      run: dotnet test TaskManagementAPI.sln --no-build --verbosity normal
+      run: dotnet test TaskManagementAPI.sln --configuration Release --no-restore --verbosity normal
