@@ -22,35 +22,45 @@ jobs:
       with:
         dotnet-version: 8.0.x
 
-    # Restore
     - name: Restore dependencies
       working-directory: ./TaskManagementAPI
       run: dotnet restore TaskManagementAPI.sln
 
-    # Build
     - name: Build
       working-directory: ./TaskManagementAPI
       run: dotnet build TaskManagementAPI.sln --no-restore --configuration Release
 
-    # Test
     - name: Test
       working-directory: ./TaskManagementAPI
       run: dotnet test TaskManagementAPI.sln --configuration Release --verbosity normal
 
-    # Login to GHCR
     - name: Login to GHCR
       run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
 
-    # Set lowercase image name
     - name: Set lowercase image name
       run: |
         IMAGE_NAME=$(echo "ghcr.io/${GITHUB_REPOSITORY}/task-api:latest" | tr '[:upper:]' '[:lower:]')
         echo "IMAGE_NAME=$IMAGE_NAME" >> $GITHUB_ENV
 
-    # Build
     - name: Build Docker Image
       run: docker build -t $IMAGE_NAME ./TaskManagementAPI
 
-    # Push
     - name: Push Docker Image
       run: docker push $IMAGE_NAME
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build
+    if: github.ref == 'refs/heads/main'
+
+    steps:
+      - name: Deploy to Homelab via SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.SSH_KEY }}
+          script: |
+            cd /srv/docker/api
+            docker compose pull
+            docker compose up -d
