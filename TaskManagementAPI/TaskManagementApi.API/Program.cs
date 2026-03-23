@@ -11,6 +11,11 @@ using System.Net;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.WebHost.ConfigureKestrel(options =>
+{
+    options.ListenAnyIP(8080); // 🔥 THIS IS THE FIX
+});
+
 // Services
 builder.Services.AddControllers()
     .AddFluentValidation(cfg =>
