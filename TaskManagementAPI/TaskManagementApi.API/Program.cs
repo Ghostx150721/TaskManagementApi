@@ -74,8 +74,15 @@ using (var scope = app.Services.CreateScope())
 // Middleware
 app.UseMiddleware<ExceptionMiddleware>();
 
-app.UseSwagger();
-app.UseSwaggerUI();
+if (app.Environment.IsDevelopment() || app.Environment.IsProduction())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI(options =>
+    {
+        options.SwaggerEndpoint("/swagger/v1/swagger.json", "Task API V1");
+        options.RoutePrefix = "swagger";
+    });
+}
 
 app.MapControllers();
 app.MapHealthChecks("/health");
