@@ -45,9 +45,11 @@ builder.Services.AddHealthChecks();
 
 builder.Services.AddSingleton<IConnectionMultiplexer>(sp =>
 {
-    var configuration = builder.Configuration.GetSection("Redis")["ConnectionString"];
+    var configuration = builder.Configuration["Redis:ConnectionString"];
     return ConnectionMultiplexer.Connect(configuration);
 });
+
+builder.Services.AddScoped<ICacheService, RedisCacheService>();
 
 var app = builder.Build();
 
