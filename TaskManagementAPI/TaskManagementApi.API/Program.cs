@@ -7,6 +7,7 @@ using TaskManagementApi.Application.Validators;
 using TaskManagementApi.Infrastructure.Persistence;
 using Polly;
 using Polly.Extensions.Http;
+using StackExchange.Redis;
 using System.Net;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -41,6 +42,12 @@ builder.Services.AddInfrastructure(builder.Configuration);
 builder.Services.AddScoped<ITaskService, TaskService>();
 
 builder.Services.AddHealthChecks();
+
+builder.Services.AddSingleton<IConnectionMultiplexer>(sp =>
+{
+    var configuration = builder.Configuration.GetSection("Redis")["ConnectionString"];
+    return ConnectionMultiplexer.Connect(configuration);
+});
 
 var app = builder.Build();
 
